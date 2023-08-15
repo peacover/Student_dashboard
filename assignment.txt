@@ -1,0 +1,7 @@
+Frontend and backend of a simple Student dashboard, where a student can register,login and create applications.
+An application consists of the student name, university name, a university course.
+You should persist the data to a database.
+
+Tech Stack:Preferably Springboot backend and React js frontend.
+
+Note: You can build upon these requirements if you see fit.
