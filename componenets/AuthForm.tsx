@@ -29,7 +29,7 @@ export interface IAuthForm {
     mode: "register" | "login";
 }
 const AuthForm : React.FC<IAuthForm> = ({ mode }) => {
-  const [formState, setFormState] = useState({ ...initial });
+  const [formState, setFormState] = useState(initial);
   const [error, setError] = useState("");
 
   const router = useRouter();
