@@ -1,6 +1,6 @@
 "use client";
 import { register, login } from "@/lib/api";
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Card from "./Card";
@@ -8,7 +8,7 @@ import Button from "./Button";
 import Input from "./Input";
 
 const registerContent = {
-  linkUrl: "/signin",
+  linkUrl: "/login",
   linkText: "Already have an account?",
   header: "Create a new Account",
   subheader: "Just a few things to get started",
@@ -25,7 +25,10 @@ const loginContent = {
 
 const initial = { firstName: "", lastName: "", username: "", password: "", universityName: ""};
 
-export default function AuthForm({ mode }: { mode: "register" | "login" }) {
+export interface IAuthForm {
+    mode: "register" | "login";
+}
+const AuthForm : React.FC<IAuthForm> = ({ mode }) => {
   const [formState, setFormState] = useState({ ...initial });
   const [error, setError] = useState("");
 
@@ -158,3 +161,5 @@ export default function AuthForm({ mode }: { mode: "register" | "login" }) {
     </Card>
   );
 }
+
+export default AuthForm;
