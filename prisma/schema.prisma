@@ -11,28 +11,43 @@ datasource db {
 }
 
 model Student {
-  id           Int           @id @default(autoincrement())
+  id           String     @id @default(uuid())
   firstName    String
   lastName     String
-  username     String        @unique
+  username     String     @unique
   password     String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  applications Application[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  courses      Course[]
+  universityId String
+  university   University @relation(fields: [universityId], references: [id])
+
+  @@index([universityId])
 }
 
-model Application {
-  id         Int      @id @default(autoincrement())
-  courseName String   @unique
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  school     School   @relation(fields: [schoolId], references: [id])
-  schoolId   Int
-  createdAt  DateTime @default(now())
+model Course {
+  id           String     @id @default(uuid())
+  courseName   String     @unique
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    String
+  university   University @relation(fields: [universityId], references: [id])
+  universityId String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  description  String?
+  deleted      Boolean    @default(false)
+
+  @@unique([studentId, courseName])
+  @@index([studentId])
 }
 
-model School {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
-  applications Application[]
+model University {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  students  Student[]
+  courses   Course[]
+
+  @@index([name])
 }

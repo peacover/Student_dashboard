@@ -1,5 +1,11 @@
-import Image from "next/image";
+import AuthRootLayout from "./(auth)/layout";
 
-export default function Home() {
-  return <></>;
+export default function RootLayout() {
+  return (
+    <>
+      <AuthRootLayout>
+
+      </AuthRootLayout>
+    </>
+  );
 }
