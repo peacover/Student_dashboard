@@ -1,11 +1,8 @@
 "use client";
 import { register, login } from "@/lib/api";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Card from "./Card";
-import Button from "./Button";
-import Input from "./Input";
 
 const registerContent = {
   linkUrl: "/login",
@@ -23,73 +20,81 @@ const loginContent = {
   buttonText: "Login",
 };
 
-const initial = { firstName: "", lastName: "", username: "", password: "", universityName: ""};
+const initial = {
+  firstName: "",
+  lastName: "",
+  username: "",
+  password: "",
+  universityName: "",
+};
 
 export interface IAuthForm {
-    mode: "register" | "login";
+  mode: "register" | "login";
 }
-const AuthForm : React.FC<IAuthForm> = ({ mode }) => {
+const AuthForm: React.FC<IAuthForm> = ({ mode }) => {
   const [formState, setFormState] = useState(initial);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(Error());
 
   const router = useRouter();
   const handleSubmit = useCallback(
-    async (e : any) => {
+    async (e: any) => {
       e.preventDefault();
-
       try {
         if (mode === "register") {
           await register(formState);
-        } else {
+        } else if (mode === "login") {
           await login(formState);
         }
 
         router.replace("/home");
       } catch (e) {
-        setError(`Could not ${mode}`);
+        setError(e);
       } finally {
         setFormState({ ...initial });
       }
     },
     [
-        formState.firstName,
-        formState.lastName,
-        formState.password,
-        formState.username,
-        formState.universityName
+      formState.firstName,
+      formState.lastName,
+      formState.password,
+      formState.username,
+      formState.universityName,
     ]
   );
 
   const content = mode === "register" ? registerContent : loginContent;
-
+  
   return (
-    <Card>
-      <div className="w-full">
-        <div className="text-center">
-          <h2 className="text-3xl mb-2">{content.header}</h2>
-          <p className="tex-lg text-black/25">{content.subheader}</p>
-        </div>
-        <form onSubmit={handleSubmit} className="py-10 w-full">
+    <div className="flex justify-center items-center w-screen h-screen">
+      <div className="block bg-yellow">{error.message}</div>
+      <div className="w-1/3 bg-primary">
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-center flex-col rounded-lg"
+        >
+          <div className="text-center">
+            <h2 className="text-3xl mb-2">{content.header}</h2>
+            <p className="tex-lg text-black/25">{content.subheader}</p>
+          </div>
           {mode === "register" && (
-            <>
-            <div className="flex mb-8 justify-between">
-              <div className="pr-2">
-                <div className="text-lg mb-4 ml-2 text-black/50">
-                  First Name
-                </div>
-                <Input
-                  required
-                  placeholder="First Name"
-                  value={formState.firstName}
-                  className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
-                  onChange={(e : any) =>
-                    setFormState((s) => ({ ...s, firstName: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="pl-2">
-                <div className="text-lg mb-4 ml-2 text-black/50">Last Name</div>
-                <Input
+            <div className="">
+              <label className="text-lg mb-4 ml-2 text-black/50">
+                First Name
+              </label>
+              <input
+                required
+                placeholder="First Name"
+                value={formState.firstName}
+                className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
+                onChange={(e) =>
+                  setFormState((s) => ({ ...s, firstName: e.target.value }))
+                }
+              />
+              <div className="mb-8">
+                <label className="text-lg mb-4 ml-2 text-black/50">
+                  Last Name
+                </label>
+                <input
                   required
                   placeholder="Last Name"
                   value={formState.lastName}
@@ -99,24 +104,28 @@ const AuthForm : React.FC<IAuthForm> = ({ mode }) => {
                   }
                 />
               </div>
+              <div className="mb-8">
+                <label className="text-lg mb-4 ml-2 text-black/50">
+                  University
+                </label>
+                <input
+                  required
+                  placeholder="University"
+                  value={formState.universityName}
+                  className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
+                  onChange={(e) =>
+                    setFormState((s) => ({
+                      ...s,
+                      universityName: e.target.value,
+                    }))
+                  }
+                />
+              </div>
             </div>
-            <div className="mb-8">
-            <div className="text-lg mb-4 ml-2 text-black/50">University</div>
-            <Input
-              required
-              placeholder="University"
-              value={formState.universityName}
-              className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
-              onChange={(e) =>
-                setFormState((s) => ({ ...s, universityName: e.target.value }))
-              }
-            />
-          </div>
-            </>
           )}
           <div className="mb-8">
-            <div className="text-lg mb-4 ml-2 text-black/50">Username</div>
-            <Input
+            <label className="text-lg mb-4 ml-2 text-black/50">Username</label>
+            <input
               required
               placeholder="Username"
               value={formState.username}
@@ -127,39 +136,32 @@ const AuthForm : React.FC<IAuthForm> = ({ mode }) => {
             />
           </div>
           <div className="mb-8">
-            <div className="text-lg mb-4 ml-2 text-black/50">Password</div>
-            <Input
+            <label className="text-lg mb-4 ml-2 text-black/50">Password</label>
+            <input
               required
               value={formState.password}
               type="password"
               placeholder="Password"
+              autoComplete="current-password"
               className="border-solid border-gray border-2 px-6 py-2 text-lg rounded-3xl w-full"
               onChange={(e) =>
                 setFormState((s) => ({ ...s, password: e.target.value }))
               }
             />
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <span>
-                <Link
-                  href={content.linkUrl}
-                  className="text-blue-600 font-bold"
-                >
-                  {content.linkText}
-                </Link>
-              </span>
-            </div>
-            <div>
-              <Button type="submit" intent="secondary">
-                {content.buttonText}
-              </Button>
-            </div>
+
+          <span>
+            <Link href={content.linkUrl} className="text-blue-600 font-bold">
+              {content.linkText}
+            </Link>
+          </span>
+          <div className="mx-auto">
+            <button type="submit">{content.buttonText}</button>
           </div>
         </form>
       </div>
-    </Card>
+    </div>
   );
-}
+};
 
 export default AuthForm;

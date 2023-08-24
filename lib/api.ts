@@ -4,6 +4,7 @@ export const fetcher = async (
   body: any,
   json = true
 ) => {
+  // console.log("sended data: ", url, method, JSON.stringify(body));
   const res = await fetch(url, {
     method,
     body: body && JSON.stringify(body),
@@ -13,7 +14,8 @@ export const fetcher = async (
     },
   });
   if (!res.ok) {
-    throw new Error(res.statusText);
+    const data = await res.json();
+    throw new Error(data.message);
   }
   if (json) {
     const data = await res.json();
