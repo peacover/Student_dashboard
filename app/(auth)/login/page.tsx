@@ -1,9 +1,7 @@
-import AuthForm from "@/componenets/AuthForm";
+import AuthForm from "@/components/AuthForm";
 
 const Login = () => {
-  return (
-      <AuthForm mode="login" />
-  );
+  return <AuthForm mode="login" />;
 };
 
 export default Login;

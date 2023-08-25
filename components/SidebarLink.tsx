@@ -1,0 +1,36 @@
+"use client";
+
+import Link from "next/link";
+import { User, Grid, Calendar } from "react-feather";
+import { usePathname } from "next/navigation";
+import React from "react";
+import { ILink } from "./Sidebar";
+
+interface ILinkProps {
+    link: ILink;
+}
+
+const icons : any = { User, Grid, Calendar };
+
+const SidebarLink : React.FC<ILinkProps> = ({link}) => {
+  const pathname = usePathname();
+  let isActive = false;
+
+  if (pathname === link.link) {
+    isActive = true;
+  }
+
+  const Icon = icons[link.icon];
+  return (
+    <Link href={link.link} className="w-full flex justify-center items-center">
+      <Icon
+        size={40}
+        className={
+          `stroke-gray-400 hover:stroke-violet-600 transition duration-200 ease-in-out ${isActive} stroke-violet-600`
+        }
+      />
+    </Link>
+  );
+};
+
+export default SidebarLink;
